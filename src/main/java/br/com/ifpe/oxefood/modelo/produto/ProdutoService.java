@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
 @Service
 public class ProdutoService {
       @Autowired
@@ -47,6 +49,14 @@ public void update(Long id, Produto produtoAlterado) {
    produto.setVersao(produto.getVersao() + 1);
    repository.save(produto);
 }
+@Transactional
+   public void delete(Long id) {
 
+       Produto produto = repository.findById(id).get();
+       produto.setHabilitado(Boolean.FALSE);
+       produto.setVersao(produto.getVersao() + 1);
+
+       repository.save(produto);
+   }
 
 }

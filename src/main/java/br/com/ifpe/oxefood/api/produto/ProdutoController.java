@@ -23,15 +23,20 @@ import br.com.ifpe.oxefood.modelo.produto.ProdutoService;
 @CrossOrigin
 
 public class ProdutoController {
-     @Autowired
-   private ProdutoService produtoService;
+    @Autowired
+    private ProdutoService produtoService;
 
-   @PostMapping
-   public ResponseEntity<Produto> save(@RequestBody ProdutoRequest request) {
+    @Autowired
+    private CategoriaProdutoService categoriaProdutoService;
 
-       Produto produto = produtoService.save(request.build());
-       return new ResponseEntity<Produto>(produto, HttpStatus.CREATED);
-   }
+    @PostMapping
+    public ResponseEntity<Produto> save(@RequestBody ProdutoRequest request) {
+
+        Produto produtoNovo = request.build();
+        produtoNovo.setCategoria(categoriaProdutoService.obterPorID(request.getIdCategoria()));
+        Produto produto = produtoService.save(request.build());
+        return new ResponseEntity<Produto>(produto, HttpStatus.CREATED);
+    }
 
     @GetMapping
     public List<Produto> listarTodos() {
@@ -43,17 +48,20 @@ public class ProdutoController {
         return produtoService.obterPorID(id);
     }
 
-     @PutMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Produto> update(@PathVariable("id") Long id, @RequestBody ProdutoRequest request) {
+       
+        Produto produto = request.build();
+        produto.setCategoria(categoriaProdutoService.obterPorID(request.getIdCategoria()));
+        produtoService.update(id, produto)
+ 
+    }
 
-       produtoService.update(id, request.build());
-       return ResponseEntity.ok().build();
- }
-@DeleteMapping("/{id}")
-   public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
 
-       produtoService.delete(id);
-       return ResponseEntity.ok().build();
-   }
+        produtoService.delete(id);
+        return ResponseEntity.ok().build();
+    }
 
 }

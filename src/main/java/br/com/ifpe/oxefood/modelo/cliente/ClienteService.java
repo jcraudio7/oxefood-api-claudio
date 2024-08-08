@@ -8,53 +8,59 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.ifpe.oxefood.modelo.Acesso.UsuarioService;
+
 @Service
 public class ClienteService {
-    
+
     @Autowired
-   private ClienteRepository repository;
+    private ClienteRepository repository;
 
-   @Transactional
-   public Cliente save(Cliente cliente) {
+    @Autowired
+    private UsuarioService usuarioService;
 
-       cliente.setHabilitado(Boolean.TRUE);
-       cliente.setVersao(1L);
-       cliente.setDataCriacao(LocalDate.now());
-       return repository.save(cliente);
-   }
+    @Transactional
+    public Cliente save(Cliente cliente) {
+        usuarioService.save(cliente.getUsuario());
 
-   public List<Cliente> listarTodos() {
-  
-    return repository.findAll();
-}
+        cliente.setHabilitado(Boolean.TRUE);
+        cliente.setVersao(1L);
+        cliente.setDataCriacao(LocalDate.now());
+        return repository.save(cliente);
+    }
 
-public Cliente obterPorID(Long id) {
+    public List<Cliente> listarTodos() {
 
-    return repository.findById(id).get();
-}
+        return repository.findAll();
+    }
 
-@Transactional
-public void update(Long id, Cliente clienteAlterado) {
+    public Cliente obterPorID(Long id) {
 
-   Cliente cliente = repository.findById(id).get();
-   cliente.setNome(clienteAlterado.getNome());
-   cliente.setDataNascimento(clienteAlterado.getDataNascimento());
-   cliente.setCpf(clienteAlterado.getCpf());
-   cliente.setFoneCelular(clienteAlterado.getFoneCelular());
-   cliente.setFoneFixo(clienteAlterado.getFoneFixo());
-     
-   cliente.setVersao(cliente.getVersao() + 1);
-   repository.save(cliente);
-}
-@Transactional
-   public void delete(Long id) {
+        return repository.findById(id).get();
+    }
 
-       Cliente cliente = repository.findById(id).get();
-       cliente.setHabilitado(Boolean.FALSE);
-       cliente.setVersao(cliente.getVersao() + 1);
+    @Transactional
+    public void update(Long id, Cliente clienteAlterado) {
 
-       repository.save(cliente);
-   }
+        Cliente cliente = repository.findById(id).get();
+        cliente.setNome(clienteAlterado.getNome());
+        cliente.setDataNascimento(clienteAlterado.getDataNascimento());
+        cliente.setCpf(clienteAlterado.getCpf());
+        cliente.setFoneCelular(clienteAlterado.getFoneCelular());
+        cliente.setFoneFixo(clienteAlterado.getFoneFixo());
 
+        cliente.setVersao(cliente.getVersao() + 1);
+        repository.save(cliente);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+
+        Cliente cliente = repository.findById(id).get();
+        cliente.setHabilitado(Boolean.FALSE);
+        cliente.setVersao(cliente.getVersao() + 1);
+
+        repository.save(cliente);
+    }
 
 }

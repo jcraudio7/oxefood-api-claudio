@@ -1,6 +1,7 @@
 package br.com.ifpe.oxefood.api.cliente;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import br.com.ifpe.oxefood.modelo.Acesso.Usuario;
 import br.com.ifpe.oxefood.modelo.cliente.Cliente;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,10 +42,25 @@ public class ClienteRequest {
     private String foneCelular;
 
     private String foneFixo;
+    @NotBlank(message = "O e-mail é de preenchimento obrigatório")
+    @Email
+    private String email;
+
+    @NotBlank(message = "A senha é de preenchimento obrigatório")
+    private String password;
+
+    public Usuario buildUsuario() {
+        return Usuario.builder()
+                .username(email)
+                .password(password)
+                .roles(Arrays.asList(Usuario.ROLE_CLIENTE))
+                .build();
+    }
 
     public Cliente build() {
 
         return Cliente.builder()
+                .usuario(buildUsuario())
                 .nome(nome)
                 .dataNascimento(dataNascimento)
                 .cpf(cpf)

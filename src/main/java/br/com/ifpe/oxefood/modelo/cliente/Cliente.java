@@ -1,8 +1,11 @@
 package br.com.ifpe.oxefood.modelo.cliente;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.hibernate.annotations.SQLRestriction;
+
+import br.com.ifpe.oxefood.modelo.Acesso.Usuario;
 import br.com.ifpe.oxefood.util.entity.EntidadeAuditavel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "Cliente")
@@ -25,7 +29,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Cliente extends EntidadeAuditavel {
 
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Usuario usuario;
+
     @OneToMany(mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     private List<EnderecoCliente> enderecos;
 
     @Column(nullable = false, length = 100)
